@@ -16,10 +16,14 @@ import { MdArrowBackIosNew } from 'react-icons/md';
 import style from './actors.module.scss';
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
 import { GetServerSideProps } from 'next';
+import axios from 'axios';
+import { toStatement } from '@babel/types';
 
-export const getServerSideProps: GetServerSideProps = async ({ locale }) => {
+export const getServerSideProps: GetServerSideProps = async ({ locale,params }) => {
+    const actor= await getActor(params?.id)
+    console.log(actor);
     return {
-        props: {
+        props: {actor,
             ...(await serverSideTranslations(locale ?? 'ru', [
                 'header',
                 'auth_modal',
@@ -31,9 +35,23 @@ export const getServerSideProps: GetServerSideProps = async ({ locale }) => {
     };
 };
 
+export const getActor=async(id:any)=>{
+    try{
+    const response=await axios.get(`http://188.120.248.77:80/staffs/${id}`)
+    return response.data
+    }
+    catch{
 
-
-export default function Actor() {
+    }
+}
+export interface ActorID{
+    actor:{
+        id:number,
+        name:string
+        types:{id:number,name:string}[],
+    }
+}
+const Actor:React.FC<ActorID>=({actor})=> {
     const router = useRouter();
     const biografyRef = useRef<HTMLHeadingElement>(null);
     const filmographyRef = useRef<HTMLHeadingElement>(null);
@@ -63,15 +81,15 @@ export default function Actor() {
                     {/*PERSON CONTAINER*/}
                     <div>
                         <Image
-                            src='https://thumbs.dfs.ivi.ru/storage5/contents/9/6/b7f9eef3eaeb3d500cd994fb130047.jpg/120x144/?q=85'
+                            src='/film/noPhotoIcon60x60.png'
                             alt='avatar'
                             width={120}
                             height={120}
                             className={style.img}
                         />
                         <div className={style.info_container}>
-                            <h1 className={style.info_container__title}>Оскар Айзек</h1>
-                            <h2 className={style.info_container__subtitle}>Oscar Isaak</h2>
+                            <h1 className={style.info_container__title}>{actor.name}</h1>
+                            <h2 className={style.info_container__subtitle}>{actor.name}</h2>{/*имя актера на английском*/}
                             <ExpandBlock visibleBlock={acortTopInfoVisibleData} width='100%'>
                                 Коэн «Внутри Льюина Дэвиса».
                             </ExpandBlock>
@@ -131,3 +149,5 @@ export default function Actor() {
         </PageLayout>
     );
 }
+
+export default Actor;
