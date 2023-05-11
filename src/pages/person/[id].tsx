@@ -1,5 +1,5 @@
-import ExpandBlock from '@/components/ExpandBlock/ExpandBlock';
-import BasicBtn from '@/components/UI/BasicBtn/BasicBtn';
+import ExpandBlock from '@/components/ExpandBlock/ExpandBlock'
+import BasicBtn from '@/components/UI/BasicBtn/BasicBtn'
 import {
     acortTopInfoVisibleData,
     actorBiografyData,
@@ -17,13 +17,15 @@ import style from './actors.module.scss';
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
 import { GetServerSideProps } from 'next';
 import axios from 'axios';
-import { toStatement } from '@babel/types';
 
 export const getServerSideProps: GetServerSideProps = async ({ locale,params }) => {
-    const actor= await getActor(params?.id)
-    console.log(actor);
+  const actor = await getActor(params?.id)
+  console.log(actor);
+
+  const films=await getFilmsByActor(params?.name)
+  console.log(films);
     return {
-        props: {actor,
+        props: {actor,films,
             ...(await serverSideTranslations(locale ?? 'ru', [
                 'header',
                 'auth_modal',
@@ -35,47 +37,55 @@ export const getServerSideProps: GetServerSideProps = async ({ locale,params }) 
     };
 };
 
-export const getActor=async(id:any)=>{
-    try{
-    const response=await axios.get(`http://188.120.248.77:80/staffs/${id}`)
-    return response.data
-    }
-    catch{
 
-    }
+export const getActor = async (id: any) => {
+  const response = await axios.get<ActorID[]>(
+    `http://188.120.248.77:80/staffs/${id}`
+  )
+  return response.data
 }
-export interface ActorID{
-    actor:{
-        id:number,
-        name:string
-        types:{id:number,name:string}[],
-    }
+export const getFilmsByActor=async(name:any)=>{
+  const response=await axios.get<ActorID>(`http://188.120.248.77/films`,{params:[`${Actor.name}`]})
+  return response.data
 }
-const Actor:React.FC<ActorID>=({actor})=> {
+interface ActorID{
+  actor:{
+    id:number,
+    name:string,
+    biography:string,
+    types:{id:number,name:string}[],
+  }
+  films:{
+    id:number,
+    name:string,
+    name_en:string,
+    mainImg:string,
+    year:number,
+    actors: {id:number;name:string}[],
+  }[]
+}
+const Actor:React.FC<ActorID>=({actor,films})=> {
     const router = useRouter();
     const biografyRef = useRef<HTMLHeadingElement>(null);
     const filmographyRef = useRef<HTMLHeadingElement>(null);
 
-    const [isExpand, setIsExpand] = useState(false);
+  const [isExpand, setIsExpand] = useState(false)
 
-    const defaultMovies = actorFilmsData.slice(0, 7);
-    const allMovies = actorFilmsData;
+  const onClickExpandButton = () => {
+    setIsExpand(true)
+  }
 
-    const onClickExpandButton = () => {
-        setIsExpand(true);
-    };
+  const onClickBackButton = () => {
+    router.back()
+  }
 
-    const onClickBackButton = () => {
-        router.back();
-    };
-
-    return (
-        <PageLayout title='Актёр'>
-            <section className={style.wrapper}>
-                <div className={style.back_button} onClick={onClickBackButton}>
-                    <MdArrowBackIosNew />
-                    <p>Назад</p>
-                </div>
+  return (
+    <PageLayout title='Актёр'>
+      <section className={style.wrapper}>
+        <div className={style.back_button} onClick={onClickBackButton}>
+          <MdArrowBackIosNew />
+          <p>Назад</p>
+        </div>
 
                 <article className={style.container}>
                     {/*PERSON CONTAINER*/}
@@ -89,7 +99,7 @@ const Actor:React.FC<ActorID>=({actor})=> {
                         />
                         <div className={style.info_container}>
                             <h1 className={style.info_container__title}>{actor.name}</h1>
-                            <h2 className={style.info_container__subtitle}>{actor.name}</h2>{/*имя актера на английском*/}
+                            <h2 className={style.info_container__subtitle}>{actor.name}</h2>
                             <ExpandBlock visibleBlock={acortTopInfoVisibleData} width='100%'>
                                 Коэн «Внутри Льюина Дэвиса».
                             </ExpandBlock>
@@ -100,54 +110,56 @@ const Actor:React.FC<ActorID>=({actor})=> {
                         </div>
                     </div>
 
-                    <div className={style.films_wrapper}>
-                        <div className={style.films_header}>
-                            <h1 className={style.films_header__title} ref={filmographyRef}>
-                                Полная фильмография
-                            </h1>
-                            <p className={style.films_header__subtitle}>47 фильмов</p>
-                        </div>
+          <div className={style.films_wrapper}>
+            <div className={style.films_header}>
+              <h1 className={style.films_header__title} ref={filmographyRef}>
+                Полная фильмография
+              </h1>
+              <p className={style.films_header__subtitle}>47 фильмов</p>
+            </div>
 
-                        {/*FILM LIST*/}
-                        <ul className={style.films_list}>
-                            {(isExpand ? allMovies : defaultMovies).map((film) => (
-                                <li key={film.id}>
-                                    <div className={style.films_list__card}>
-                                        <Image
-                                            src={film.image}
-                                            alt={film.title}
-                                            width={80}
-                                            height={122}
-                                            className={style.img}
-                                        />
-                                        <div className={style.film_info}>
-                                            <p>{film.year}</p>
-                                            <p className={style.film_info__title}>{film.title}</p>
-                                            <p className={style.film_info__rating}>
-                                                Рейтинг Иви: {film.rating}
-                                            </p>
-                                        </div>
-                                    </div>
-                                    <BasicBtn className={style.button}>Подробнее</BasicBtn>
-                                </li>
-                            ))}
-                        </ul>
-                        {!isExpand && (
-                            <p className={style.more_films} onClick={onClickExpandButton}>
-                                Eще 39 фильмов
-                            </p>
-                        )}
+            {/*FILM LIST*/}
+            <ul className={style.films_list}>
+              {films.map((film)=>
+                <li key={film.id}>
+                  <div className={style.films_list__card}>
+                    <Image
+                      src={film.mainImg}
+                      alt={film.name}
+                      width={80}
+                      height={122}
+                      className={style.img}
+                    />
+                    <div className={style.film_info}>
+                      <p>{film.year}</p>
+                      <p className={style.film_info__title}>{film.name}</p>
+                      <p className={style.film_info__rating}>
+                        Рейтинг Иви: *8,9
+                      </p>
                     </div>
-                    <div className={style.biografy}>
-                        <h2 ref={biografyRef}>Биография</h2>
-                        <ExpandBlock visibleBlock={actorBiografyInfoVisibleData} width='100%' lineClamp={4} expandWord={'Читать дальше'}>
-                            {actorBiografyData}
-                        </ExpandBlock>
-                    </div>
-                </article>
-            </section>
-        </PageLayout>
-    );
+                  </div>
+                  <BasicBtn className={style.button}>Подробнее</BasicBtn>
+                </li>)}
+            </ul>
+              <p className={style.more_films}>
+                Eще 39 фильмов
+            </p>
+          </div>
+          <div className={style.biografy}>
+            <h2 ref={biografyRef}>Биография</h2>
+            <ExpandBlock
+              visibleBlock={actor.biography}
+              width='100%'
+              lineClamp={16}
+              expandWord={'Читать дальше'}
+            >
+              {actorBiografyData}
+            </ExpandBlock>
+          </div>
+        </article>
+      </section>
+    </PageLayout>
+  )
 }
 
 export default Actor;
