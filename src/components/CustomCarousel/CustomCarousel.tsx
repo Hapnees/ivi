@@ -5,7 +5,11 @@ import { useWindow } from '@/hooks/useWindow'
 import { ICustomCarouselProps } from '@/types/customCarousel'
 import { adaptiveSize } from '@/utils/adaptive.utils'
 import Link from 'next/link'
+<<<<<<< HEAD
 import React, { FC, MutableRefObject, memo, useRef, useState } from 'react'
+=======
+import React, { FC, memo, useRef, useState, useEffect } from 'react'
+>>>>>>> 2968c9a251e14f27af4b292c4b4993b67cbe3e6f
 import { MdArrowBackIosNew } from 'react-icons/md'
 import style from './CustomCarousel.module.scss'
 import CustomCarouselArrows from './CustomCarouselArrows/CustomCarouselArrows'
@@ -90,10 +94,28 @@ const CustomCarousel: FC<ICustomCarouselProps> = ({
     setArrowSize(() => adaptiveSize(arrowSizeIncoming, 20))
   }
 
+  // Действия при изменении ширины экрана (адаптив)
   useWindow(setterElements, [refs, setElementLens, elementsView, gap])
   useWindow(setterGap, [setGap])
   useWindow(setterArrowSize, [setArrowSize])
+
+  // Брейкпоинты
   useBreakPoints(setElementsView, elementsView, breakpoints)
+
+  // Ререндер при изменении elementsViewIncoming
+  useEffect(() => {
+    setElementsView(elementsViewIncoming)
+  }, [elementsViewIncoming])
+
+  // Ререндер при изменении arrowSizeIncoming
+  useEffect(() => {
+    setArrowSize(arrowSizeIncoming)
+  }, [arrowSizeIncoming])
+
+  // Ререндер при изменении space
+  useEffect(() => {
+    setGap(space[0])
+  }, [space])
 
   return (
     <article

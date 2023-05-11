@@ -11,6 +11,7 @@ const TopTenList: React.FC = () => {
     const { t } = useTranslation('home');
     const { locale } = useRouter();
 
+<<<<<<< HEAD
     return (
         <div className={style.wrapper}>
             <div className={style.container}>
@@ -46,6 +47,23 @@ const TopTenList: React.FC = () => {
                     ))}
                 </CustomCarousel>
             </div>
+=======
+  return (
+    <div className={style.wrapper}>
+      <div className={style.container}>
+        <div className={style.title}>
+          {locale === 'ru' ? (
+            <Image
+              src='https://solea-parent.dfs.ivi.ru/picture/bypass/top10.svg'
+              alt='top10'
+              width={116}
+              height={28}
+            />
+          ) : (
+            <p>{t('top-10')}</p>
+          )}
+          <p>{t('this-week')}</p>
+>>>>>>> 2968c9a251e14f27af4b292c4b4993b67cbe3e6f
         </div>
     );
 };

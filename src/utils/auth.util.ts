@@ -1,5 +1,8 @@
 import axios from 'axios';
 import { i18n } from 'next-i18next';
+import jwt from 'jsonwebtoken';
+import { Session } from 'next-auth';
+import { signOut } from 'next-auth/react';
 
 type CheckEmailResponse = {
     status: number;
@@ -7,10 +10,12 @@ type CheckEmailResponse = {
 
 i18n?.loadNamespaces(['auth_modal']);
 
+const domain = 'http://localhost:3000';
+
 export async function checkEmailVacancy(email: string): Promise<string> {
     try {
         const response = await axios.get<CheckEmailResponse>(
-            `http://localhost:3000/check-email/${encodeURIComponent(email)}`
+            `${domain}/check-email/${encodeURIComponent(email)}`
         );
         if (response.status === 200) {
             return 'register';
@@ -46,12 +51,23 @@ export function validateEmail(email: string): string {
 export function validatePassword(password: string): string[] {
     let messages: string[] = [];
     if (password.length === 0) {
+<<<<<<< HEAD
         messages.push(i18n?.t('error-messages.min-length') ?? 'Пожалуйста, введите пароль');
+=======
+        messages.push(
+            i18n?.t('auth_modal:error-messages.no-empty-pass') ?? 'Пожалуйста, введите пароль'
+        );
+>>>>>>> 2968c9a251e14f27af4b292c4b4993b67cbe3e6f
         return messages;
     }
-    if (password.length < 6) {
+    if (password.length < 6 || password.length > 24) {
         messages.push(
+<<<<<<< HEAD
             i18n?.t('error-messages.min-length') ?? 'Пароль должен иметь как минимум 6 символов'
+=======
+            i18n?.t('auth_modal:error-messages.length') ??
+                'Длина пароля должна быть не меньше 6 и не больше 24 символов'
+>>>>>>> 2968c9a251e14f27af4b292c4b4993b67cbe3e6f
         );
     }
     const passwordRegex = /^[a-zA-Z0-9!@#$%^&*()_+-=,.<>?;:'"\\/[\]{}|`~]+$/;
@@ -69,5 +85,44 @@ export function validateConfirmedPassword(password: string, confirmation: string
         return '';
     } else {
         return i18n?.t('error-messages.no-confirmation-match') ?? 'Пароли должны совпадать';
+    }
+}
+
+export function genDBPasswordMock(email: string) {
+    const password = jwt
+        .sign({ email: email }, process.env.PASS_MOCK_SECRET as string, {
+            noTimestamp: true,
+        })
+        .split('.')[2]
+        .substring(0, 24);
+    return password;
+}
+
+export function getSerializableSession(inputSession: Session): Session | null {
+    if (!inputSession) {
+        return null;
+    }
+    for (let key in inputSession.user) {
+        if (!inputSession.user[key]) {
+            inputSession.user[key] = null;
+        }
+    }
+    return inputSession;
+}
+
+export async function checkAdminRole(accessToken: string | null): Promise<boolean> {
+    try {
+        const checkAdmin = await axios.get(`${domain}/check-admin`, {
+            headers: { Authorization: `Bearer ${accessToken}` },
+        });
+        return true;
+    } catch (err) {
+        return false;
+    }
+}
+
+export async function checkAdminSession(accessToken: string | null) {
+    if (!(await checkAdminRole(accessToken))) {
+        signOut();
     }
 }

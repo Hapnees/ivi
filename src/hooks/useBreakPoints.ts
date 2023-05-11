@@ -1,4 +1,8 @@
+<<<<<<< HEAD
 import { Dispatch, SetStateAction, useEffect } from 'react'
+=======
+import { Dispatch, SetStateAction, useEffect, useRef } from 'react'
+>>>>>>> 2968c9a251e14f27af4b292c4b4993b67cbe3e6f
 
 export const useBreakPoints = (
   setter: Dispatch<SetStateAction<number>>,

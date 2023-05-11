@@ -29,7 +29,25 @@ const filterList: Omit<IFilterBlockEl, 'isExpand'>[] = [
   { title: 'actor' },
 ]
 
+<<<<<<< HEAD
 const FilterBlock = () => {
+=======
+interface IProps {
+  genres: IFilterGetResponse[]
+  countries: IFilterGetResponse[]
+  directors: IFilterGetResponse[]
+  actors: IFilterGetResponse[]
+  className?: string
+}
+
+const FilterBlock: FC<IProps> = ({
+  genres,
+  countries,
+  directors,
+  actors,
+  className: propsClassName,
+}) => {
+>>>>>>> 2968c9a251e14f27af4b292c4b4993b67cbe3e6f
   const router = useRouter()
   const { t } = useTranslation('movies')
 

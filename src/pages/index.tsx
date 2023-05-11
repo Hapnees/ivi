@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 import BannerCarousel from '@/components/BannerCarousel/BannerCarousel';
 import CustomCarousel from '@/components/CustomCarousel/CustomCarousel';
 import ExpandBlock from '@/components/ExpandBlock/ExpandBlock';
@@ -12,12 +13,31 @@ import style from './index.module.scss';
 import { GetStaticProps } from 'next';
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
 import { useTranslation } from 'next-i18next';
+=======
+import BannerCarousel from '@/components/BannerCarousel/BannerCarousel'
+import CustomCarousel from '@/components/CustomCarousel/CustomCarousel'
+import ExpandBlock from '@/components/ExpandBlock/ExpandBlock'
+import HomePageInfo from '@/components/HomePageInfo/HomePageInfo'
+import MovieCard from '@/components/MovieCard/MovieCard'
+import TopTenList from '@/components/TopTenList/TopTenList'
+import LongButton from '@/components/UI/LongButton/LongButton'
+import ViewAllBlock from '@/components/ViewAllBlock/ViewAllBlock'
+import PageLayout from '@/layouts/PageLayout/PageLayout'
+import { IMovie } from '@/types/films.api.interface'
+import { GetStaticProps, NextPage } from 'next'
+import { useTranslation } from 'next-i18next'
+import { serverSideTranslations } from 'next-i18next/serverSideTranslations'
+import style from './index.module.scss'
+import Loader from '@/components/Loader/Loader'
+import { filmsAPI } from '@/api/queries/films.api'
+>>>>>>> 2968c9a251e14f27af4b292c4b4993b67cbe3e6f
 
 const imgLongButton_1 = 'https://solea-parent.dfs.ivi.ru/picture/ffffff,ffffff/lightning.svg';
 
 const imgLongButton_2 = 'https://solea-parent.dfs.ivi.ru/picture/ffffff,ffffff/gift.svg';
 
 export const getStaticProps: GetStaticProps = async ({ locale }) => {
+<<<<<<< HEAD
     return {
         props: {
             ...(await serverSideTranslations(locale ?? 'ru', [
@@ -30,6 +50,28 @@ export const getStaticProps: GetStaticProps = async ({ locale }) => {
         },
     };
 };
+=======
+  const { films: firstCarouselFilms } = await filmsAPI.getFilmsHomePage()
+  const { films: secondCarouselFilms } = await filmsAPI.getFilmsHomePage({
+    page: 2,
+  })
+
+  return {
+    props: {
+      ...(await serverSideTranslations(locale ?? 'ru', [
+        'header',
+        'auth_modal',
+        'home',
+        'error',
+        'common',
+        'footer',
+      ])),
+      firstCarouselFilms,
+      secondCarouselFilms,
+    },
+  }
+}
+>>>>>>> 2968c9a251e14f27af4b292c4b4993b67cbe3e6f
 
 const VisibleText = () => {
     const { t } = useTranslation('home');
