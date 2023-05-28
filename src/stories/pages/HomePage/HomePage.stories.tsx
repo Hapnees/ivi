@@ -19,6 +19,7 @@ const meta: Meta = {
   argTypes: {
     firstCarouselFilms: { table: { disable: true } },
     secondCarouselFilms: { table: { disable: true } },
+    topTenFilms: { table: { disable: true } },
   },
 }
 
