@@ -16,7 +16,6 @@ yarn.lock
 /cypress/screenshots
 
 # next.js
-/.next/
 /out/
 
 
