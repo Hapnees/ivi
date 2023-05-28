@@ -33,6 +33,7 @@ export const Primary: Story = {
   args: {
     firstCarouselFilms: transformFilms(filmsListData),
     secondCarouselFilms: transformFilms(filmsListData),
+    topTenFilms: transformFilms(filmsListData).slice(0, 10),
   },
 }
 
