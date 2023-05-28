@@ -1,6 +1,8 @@
 import { Meta, StoryObj } from '@storybook/react'
 import TopTenListCard from '@/components/UI/Cards/TopTenListCard/TopTenListCard'
 import { topTenListImgNumbers } from '@/data/topTenList.data'
+import { filmsListData } from '@/data/films.data'
+import { transformFilmById } from '@/api/transforms/films.transform'
 
 type Story = StoryObj<typeof TopTenListCard>
 
@@ -33,6 +35,7 @@ const meta: Meta = {
 export const Primary: Story = {
   args: {
     index: 0,
+    film: transformFilmById(filmsListData[0]),
   },
 }
 
