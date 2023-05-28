@@ -19,12 +19,6 @@
       "@/*": ["./src/*"]
     }
   },
-  "include": [
-    "next-env.d.ts",
-    "**/*.ts",
-    "**/*.tsx",
-    "custom.d.ts",
-    ".storybook/docs.container.tsx"
-  ],
+  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", "custom.d.ts"],
   "exclude": ["node_modules", "cypress/**/*.ts", "cypress.config.ts"]
 }
