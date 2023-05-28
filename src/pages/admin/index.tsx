@@ -7,7 +7,6 @@ import { serverSideTranslations } from 'next-i18next/serverSideTranslations'
 import { useEffect, useRef, useState } from 'react'
 import { authOptions } from '../api/auth/[...nextauth]'
 import { getSerializableSession } from '@/utils/auth.util'
-import { Session } from 'next-auth'
 import { useRouter } from 'next/router'
 import AdminMovie from '@/components/AdminMovie/AdminMovie'
 import { ICRUDFilm, ICRUDGenre } from '@/types/api/ICrudMovie'
@@ -28,17 +27,18 @@ import { filtersAPI } from '@/api/queries/filters.api'
 import { authAPI } from '@/api/queries/auth.api'
 
 interface IAdminProps {
-    defaultFilms: string;
-    genres: string;
-    filterGenres: IStaffGetResponse[];
-    countries: IStaffGetResponse[];
-    directors: IStaffGetResponse[];
-    actors: IStaffGetResponse[];
-    totalCount: number;
-    maxCountScore: number;
-    minCountScore: number;
-    maxYear: number;
-    minYear: number;
+  defaultFilms: string
+  genres: string
+  filterGenres: IStaffGetResponse[]
+  countries: IStaffGetResponse[]
+  directors: IStaffGetResponse[]
+  actors: IStaffGetResponse[]
+  totalCount: number
+  maxCountScore: number
+  minCountScore: number
+  maxYear: number
+  minYear: number
+  maxRating: number
 }
 
 export const getServerSideProps = async ({
@@ -74,23 +74,27 @@ export const getServerSideProps = async ({
   const directors = await staffsAPI.getDirectors()
   const actors = await staffsAPI.getActors()
 
-    return {
-        props: {
-            ...(await serverSideTranslations(locale ?? 'ru', ['common', 'admin', 'movies'])),
-            defaultFilms: serializedFilms,
-            maxCountScore,
-            minCountScore,
-            maxYear,
-            minYear,
-            genres,
-            filterGenres,
-            countries,
-            directors,
-            actors,
-            totalCount,
-        },
-    };
-};
+  return {
+    props: {
+      ...(await serverSideTranslations(locale ?? 'ru', [
+        'common',
+        'admin',
+        'movies',
+      ])),
+      defaultFilms: serializedFilms,
+      maxCountScore,
+      minCountScore,
+      maxYear,
+      minYear,
+      genres,
+      filterGenres,
+      countries,
+      directors,
+      actors,
+      totalCount,
+    },
+  }
+}
 
 export default function Admin({
   defaultFilms,
